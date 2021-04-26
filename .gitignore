@@ -1,0 +1,6 @@
+# env files
+.idea
+
+# debuge & release
+cmake-build-debug
+cmake-build-release
