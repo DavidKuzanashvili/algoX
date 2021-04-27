@@ -9,6 +9,8 @@ using namespace std;
 class Node {
 private:
     vector<int> state;
+    int depth = 0;
+    int cost = 0;
     int getZeroPosition()
     {
         for (int i = 0; i < state.size(); i++)
@@ -36,6 +38,14 @@ public:
         state = std::move(s);
     }
 
+    [[nodiscard]] inline int getDepth() const { return depth; }
+
+    inline void setDepth(int val) { depth = val; }
+
+    [[nodiscard]] inline int getCost() const { return cost; }
+
+    inline void setCost(int val) { cost = val; }
+
     vector<int> getState()
     {
         return state;
@@ -48,6 +58,8 @@ public:
             cout << state[i] << " ";
             if ((i + 1) % cols == 0) cout << endl;
         }
+
+        cout << "\n Node depth: " << depth << endl;
     }
 
     void moveUp()
@@ -120,6 +132,26 @@ public:
                 return true;
         }
         return false;
+    }
+
+    int heuristic()
+    {
+        vector<int> goal = vector<int>
+        {
+                1, 2, 3,
+                4, 0, 6,
+                7, 8, 5
+        };
+
+        int result = 0;
+
+        for(int i = 0; i < goal.size(); i++)
+        {
+            if (goal[i] == state[i])
+                result++;
+        }
+
+        return result;
     }
 };
 

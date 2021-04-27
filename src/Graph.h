@@ -16,6 +16,39 @@ private:
 
     int nodesSearched = 0;
 
+    int getInsertionIndex(Node& node)
+    {
+        if (node.getCost() <= open[0].getCost())
+            return 0;
+
+        if (node.getCost() >= open.front().getCost())
+            return open.size();
+
+        for(int i = 1; i < open.size(); i++)
+        {
+            if (node.getCost() >= open[i - 1].getCost() && node.getCost() <= open[i].getCost())
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    void insert(Node& node)
+    {
+        int index = getInsertionIndex(node);
+        open.resize(1);
+
+        while(index < open.size() - 1)
+        {
+            open[index + 1] = open[index];
+            index++;
+        }
+
+        open[index] = node;
+    }
+
     static bool goalReached(vector<int> state)
     {
         vector<int> goalState = vector<int>
@@ -51,32 +84,43 @@ private:
     void addOpenedNode(Node tmp)
     {
         if(!nodeAlreadyOpened(tmp))
+        {
+            // insert(tmp);
             open.push_back(tmp);
+        }
     }
 
     void generateChildStates(Node n)
     {
         if (n.canMoveUp()) {
             Node tmp = n;
+            tmp.setDepth(n.getDepth() + 1);
             tmp.moveUp();
+            tmp.setCost(tmp.getDepth() + tmp.heuristic());
             addOpenedNode(tmp);
         }
 
         if (n.canMoveRight()) {
             Node tmp = n;
+            tmp.setDepth(n.getDepth() + 1);
             tmp.moveRight();
+            tmp.setCost(tmp.getDepth() + tmp.heuristic());
             addOpenedNode(tmp);
         }
 
         if (n.canMoveDown()) {
             Node tmp = n;
+            tmp.setDepth(n.getDepth() + 1);
             tmp.moveDown();
+            tmp.setCost(tmp.getDepth() + tmp.heuristic());
             addOpenedNode(tmp);
         }
 
         if (n.canMoveLeft()) {
             Node tmp = n;
+            tmp.setDepth(n.getDepth() + 1);
             tmp.moveLeft();
+            tmp.setCost(tmp.getDepth() + tmp.heuristic());
             addOpenedNode(tmp);
         }
     }
@@ -111,6 +155,8 @@ public:
     {
         // Init starting point
         Node node(std::move(startingState));
+        node.setDepth(0);
+        node.setCost(node.getDepth() + node.heuristic());
         open.push_back(node);
 
         find();
