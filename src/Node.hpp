@@ -139,8 +139,8 @@ public:
         vector<int> goal = vector<int>
         {
                 1, 2, 3,
-                4, 0, 6,
-                7, 8, 5
+                4, 5, 6,
+                7, 8, 0
         };
 
         int result = 0;

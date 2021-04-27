@@ -18,32 +18,46 @@ private:
 
     int getInsertionIndex(Node& node)
     {
-        if (node.getCost() <= open[0].getCost())
+        if (node.getCost() <= open.front().getCost())
             return 0;
 
-        if (node.getCost() >= open.front().getCost())
+        if (node.getCost() >= open.back().getCost())
             return open.size();
 
+        int result = -1;
         for(int i = 1; i < open.size(); i++)
         {
             if (node.getCost() >= open[i - 1].getCost() && node.getCost() <= open[i].getCost())
             {
-                return i;
+                result = i;
             }
         }
 
-        return -1;
+        if (open[result].getCost() <= node.getCost())
+        {
+            result++;
+        }
+
+        return result;
     }
 
     void insert(Node& node)
     {
         int index = getInsertionIndex(node);
-        open.resize(1);
+        open.resize(open.size() + 1);
 
-        while(index < open.size() - 1)
+        if (open.size() <= 1)
         {
-            open[index + 1] = open[index];
-            index++;
+            open.push_back(node);
+            return;
+        }
+
+        int i = open.size() - 2;
+
+        while(i >= index)
+        {
+            open[i + 1] = open[i];
+            i--;
         }
 
         open[index] = node;
@@ -85,8 +99,8 @@ private:
     {
         if(!nodeAlreadyOpened(tmp))
         {
-            // insert(tmp);
-            open.push_back(tmp);
+            insert(tmp);
+            // open.push_back(tmp);
         }
     }
 
