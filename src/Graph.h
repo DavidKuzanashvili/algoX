@@ -14,7 +14,6 @@ private:
     deque<Node> closed;
     deque<Node> open;
 
-    int depth = 0;
     int nodesSearched = 0;
 
     static bool goalReached(vector<int> state)
@@ -80,20 +79,25 @@ private:
             tmp.moveLeft();
             addOpenedNode(tmp);
         }
-
-        depth++;
     }
 
     void find()
     {
+        if (open.empty())
+        {
+            cout << "Solution not found" << endl;
+            return;
+        }
+
         Node currentNode = open.front();
+
         cout << "<<<<<<<<<<<<<<<<<<" << endl;
         currentNode.printState();
         cout << "<<<<<<<<<<<<<<<<<<" << endl;
+
         open.pop_front();
         if (goalReached(currentNode.getState()))
         {
-            cout << "Solved on depth " << depth << "\n";
             cout << "Searched " << nodesSearched << " node total\n";
             return;
         }
