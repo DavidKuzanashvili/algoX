@@ -4,13 +4,30 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <sstream>
+#include <string>
 using namespace std;
 
 class Node {
 private:
+    // მდგომარეობა
     vector<int> state;
+    /*
+     * სიღრმე, რომელზეც იმყოფება კვანძი,
+     * გამოყენებული იქნება როგორც გზის ფუნქცია,
+     * ვინაიდან ნებისმიერ კვანზე გადასვლის ფასი
+     * უდრის 1_ს
+     * */
     int depth = 0;
-    int cost = 0;
+
+    // მიზნის მდგომარეობა (იყენებს ევრისტიკული ფუნქცია)
+    vector<int> goal = vector<int>
+    {
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 0
+    };
+
     int getZeroPosition()
     {
         for (int i = 0; i < state.size(); i++)
@@ -23,15 +40,7 @@ private:
         return -1;
     }
 public:
-    Node()
-    {
-        state = vector<int>
-        {
-                1, 2, 3,
-                4, 0, 6,
-                7, 8, 5
-        };
-    }
+    Node() = default;
 
     explicit Node(vector<int> s)
     {
@@ -42,15 +51,12 @@ public:
 
     inline void setDepth(int val) { depth = val; }
 
-    [[nodiscard]] inline int getCost() const { return cost; }
-
-    inline void setCost(int val) { cost = val; }
-
     vector<int> getState()
     {
         return state;
     }
 
+    // ბეჭდავს მდგომარეობას
     void printState(int cols = 3)
     {
         for(int i = 0; i < state.size(); i++)
@@ -60,8 +66,14 @@ public:
         }
 
         cout << "\n Node depth: " << depth << endl;
+        cout << "\n Node cost: " << cost() << endl;
     }
 
+    /*
+     * დამხმარე move ფუნქციები
+     * მდგომარეობის რიცხვების შესაბამის
+     * ადგილზე მოსათავსებლად
+     * */
     void moveUp()
     {
         int i = getZeroPosition();
@@ -114,6 +126,9 @@ public:
         return (i + 1) % 3 != 0;
     }
 
+    /*
+     * ტოლობის ოპერატორი ორი კვანძის მდგომარეობების შესადარებლად
+     * */
     bool operator ==(Node& node) const
     {
         for(int i = 0; i < state.size(); i++)
@@ -124,6 +139,9 @@ public:
         return true;
     }
 
+    /*
+     * უტოლობის ოპერატორი ორი კვანძის მდგომარეობების შესადარებლად
+     * */
     bool operator !=(Node& node) const
     {
         for(int i = 0; i < state.size(); i++)
@@ -134,24 +152,32 @@ public:
         return false;
     }
 
+    // შემფასებელი ფუნქცია (გზის ფასი + ევრისტიკული ფუნქციის მნიშვნელობა)
+    int cost() {
+        return depth + heuristic();
+    }
+
+    /*
+     * ევრისტიკული h ფუნქცია, რომელიც ითვლის მოცემული
+     * კვანძისთვის (მდგომარეობისთვის) რადმენი რიცხვი
+     * არ არის თავის ადგილზე
+     * */
     int heuristic()
     {
-        vector<int> goal = vector<int>
-        {
-                1, 2, 3,
-                4, 5, 6,
-                7, 8, 0
-        };
-
         int result = 0;
 
         for(int i = 0; i < goal.size(); i++)
         {
-            if (goal[i] == state[i])
+            if (goal[i] != state[i])
                 result++;
         }
 
         return result;
+    }
+
+    void setGoal(vector<int> g)
+    {
+        goal = std::move(g);
     }
 };
 
